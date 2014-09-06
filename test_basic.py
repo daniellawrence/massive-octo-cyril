@@ -1,14 +1,14 @@
-import main
+from bot import Bot
 
 
 def test_bot_defaults():
-    bot = main.Bot()
+    bot = Bot()
     assert bot.__class__.__name__ == "Bot"
     assert bot.listen_map == {}
 
 
 def test_bot_add_deco():
-    bot = main.Bot()
+    bot = Bot()
     assert bot.listen_map == {}
 
     @bot.listen_for("hi")
@@ -20,7 +20,7 @@ def test_bot_add_deco():
 
 
 def test_bot_matching():
-    bot = main.Bot()
+    bot = Bot()
     assert 'hi' in bot.listen_map.keys()
     assert len(bot.listen_map.keys()) == 1
     (rule, function, kwargs) = bot.match_message_to_listen_rule("hi")
