@@ -12,4 +12,4 @@ Add a new function
 
 Testing
 
-    bot.respond("you test message")
+    bot.respond_to("you test message")

@@ -27,7 +27,7 @@ class Bot(object):
             return rule, function, rule_match.groupdict()
         return None, None, None
 
-    def respond(self, message):
+    def respond_to(self, message):
         (rule, function, kwargs) = self.match_message_to_listen_rule(message)
         if rule is None or function is None:
             return
@@ -50,7 +50,7 @@ if __name__ == '__main__':
         return "%s" % message
     bot.add_listen_rule("echo (?P<message>.*)", echo)
 
-    bot.respond("hello bob")
-    bot.respond("hi bob")
-    bot.respond("bye bob")
-    bot.respond("echo bob bob bob")
+    bot.respond_to("hello bob")
+    bot.respond_to("hi bob")
+    bot.respond_to("bye bob")
+    bot.respond_to("echo bob bob bob")
