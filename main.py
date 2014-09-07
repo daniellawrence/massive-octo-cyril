@@ -4,7 +4,7 @@ from bot import Bot
 if __name__ == '__main__':
     bot = Bot()
 
-    from examples import web
+    # from examples import web
 
     @bot.listen_for("hello (?P<name>\w+)")
     def hello(name):
@@ -18,9 +18,13 @@ if __name__ == '__main__':
         return "%s" % message
     bot.add_listen_rule("echo (?P<message>.*)", echo)
 
-    bot.respond_to("hello bob")
-    bot.respond_to("hi bob")
-    bot.respond_to("bye bob")
-    bot.respond_to("echo bob bob bob")
-
-    bot.respond_to("web hi bob")
+    m = bot.respond_to("hello bob")
+    print(m)
+    m = bot.respond_to("hi bob")
+    print(m)
+    m = bot.respond_to("bye bob")
+    print(m)
+    m = bot.respond_to("echo bob bob bob")
+    print(m)
+    m = bot.respond_to("web hi bob")
+    print(m)
