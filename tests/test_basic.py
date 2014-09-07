@@ -37,7 +37,7 @@ class TestSequenceFunctions(unittest.TestCase):
             pass
         self.assertIn('^@testbot hi$', self.bot.listen_map.keys())
         self.assertEqual(len(self.bot.listen_map.keys()), 1)
-        (rule, function, kwargs) = self.bot.match_message_to_listen_rule("@testbot hi")
+        (rule, function, kwargs) = self.bot.match_rule("@testbot hi")
         self.assertEqual(rule, '^@testbot hi$')
         self.assertEqual(kwargs, {})
         (rule, function, kwargs) = self.bot.match_rule("hello")
@@ -48,7 +48,8 @@ class TestSequenceFunctions(unittest.TestCase):
         def bye(name):
             return "cya %s" % name
 
-        self.assertIn('^@testbot bye (?P<name>\w+)$', self.bot.listen_map.keys())
+        self.assertIn('^@testbot bye (?P<name>\w+)$', 
+                      self.bot.listen_map.keys())
         self.assertEqual(len(self.bot.listen_map.keys()), 2)
 
         (rule, function, kwargs) = self.bot.match_rule("bye")
