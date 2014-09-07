@@ -48,7 +48,7 @@ class TestSequenceFunctions(unittest.TestCase):
         def bye(name):
             return "cya %s" % name
 
-        self.assertIn('^@testbot bye (?P<name>\w+)$', 
+        self.assertIn('^@testbot bye (?P<name>\w+)$',
                       self.bot.listen_map.keys())
         self.assertEqual(len(self.bot.listen_map.keys()), 2)
 
