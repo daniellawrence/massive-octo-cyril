@@ -13,7 +13,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_defaults(self):
         self.assertEqual(self.bot.name, "testbot")
         self.assertEqual(self.bot.apikey, "apikey")
-        self.assertEqual(self.bot.rooms, ['roomname'])
+        self.assertEqual(self.bot.rooms, 'roomname')
 
     def test_message_for_me(self):
         self.assertEqual(hipchat.message_for_me("botname", "@botname"), True)

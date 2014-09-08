@@ -2,17 +2,48 @@
 import re
 
 
+def regex2simple(regex):
+    words = regex.split()
+    words_regex = []
+    for w in words:
+        if '?P' not in w:
+            words_regex.append(w)
+            continue
+        regex_w = w.replace('(?P<', '<')
+        regex_w = re.sub('>.*', '>', regex_w)
+        words_regex.append(regex_w)
+    return ' '.join(words_regex)
+
+
+def simple2regex(regex):
+    words = regex.split()
+    words_regex = []
+    for w in words:
+        if '?P' in w:
+            words_regex.append(w)
+            continue
+        regex_w = re.sub(
+            r'(<\w+>)',
+            r'(?P\1\S+)',
+            w
+        )
+        words_regex.append(regex_w)
+    return ' '.join(words_regex)
+
+
 class Bot(object):
 
     def __init__(self, name, *args, **kwags):
         self.name = name
         self.listen_map = {}
+        self.add_listen_rule('help', self.help)
 
     def add_listen_rule(self, rule, endpoint, **kwargs):
         rule = "^@%s %s$" % (self.name, rule)
         self.listen_map[rule] = endpoint
 
     def listen_for(self, rule, **kwargs):
+        rule = simple2regex(rule)
 
         def decorator(endpoint):
             self.add_listen_rule(rule, endpoint, **kwargs)
@@ -34,9 +65,24 @@ class Bot(object):
         (rule, function, kwargs) = self.match_rule(message)
         if rule is None or function is None:
             return
-        # response = "%s: %s" % (function.__name__, function(**kwargs))
-        response = "%s" % function(**kwargs)
+        if kwargs:
+            response = "%s" % function(**kwargs)
+        elif function == self.help:
+            response = "%s" % self.help()
+        else:
+            response = "%s" % function()
         return response
+
+    def help(self):
+        "Generate a help map"
+        output = "Try one of:\n"
+        for rule, func in self.listen_map.items():
+            description = func.__name__
+            if func.__doc__:
+                description = func.__doc__
+            rule = regex2simple(rule)
+            output += "%-50s\t%s\n" % (rule, description)
+        return output
 
     def listen(self):
         raise NotImplemented("Missing listen method")
