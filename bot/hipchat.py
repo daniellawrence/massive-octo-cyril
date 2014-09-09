@@ -6,8 +6,6 @@ import datetime
 import pytz
 
 
-
-
 class HipChatBot(Bot):
 
     API_RATE_LIMIT_SECONDS = 10
