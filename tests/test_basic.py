@@ -13,11 +13,25 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_setup_and_teardown(self):
         self.assertEqual(self.bot.listen_map.keys(), ['^@testbot help$'])
 
+    def mock_function(self):
+        pass
+
     def test_bot_defaults(self):
         self.assertEqual(self.bot.__class__.__name__, "Bot")
         self.assertEqual(self.bot.listen_map.keys(), ['^@testbot help$'])
         with self.assertRaises(Exception):
             self.bot.listen()
+        with self.assertRaises(Exception):
+            self.bot.connect()
+        self.bot.connect = self.mock_function
+        with self.assertRaises(Exception):
+            self.bot.run()
+
+    def test_message_for_me(self):
+        self.assertEqual(bot.message_for_me("botname", "@botname"), True)
+        self.assertEqual(bot.message_for_me("botname", "botname"), False)
+        self.assertEqual(bot.message_for_me("botname", "name"), False)
+        self.assertEqual(bot.message_for_me("bot", "@bot"), True)
 
     def test_bot_add_deco(self):
         self.assertEqual(len(self.bot.listen_map), 1)
@@ -123,4 +137,14 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertIn("@testbot hi <name>",
                       self.bot.respond_to("@testbot help"))
 
-# unittest.main()
+    def test_bot_handle_exception(self):
+        self.assertEqual(self.bot.listen_map.keys(), ['^@testbot help$'])
+        self.assertIn("Try one of:", self.bot.respond_to("@testbot help"))
+        self.assertIn("@testbot help", self.bot.respond_to("@testbot help"))
+
+        @self.bot.listen_for("hi <name>")
+        def hi(name):
+            5 / 0
+
+        self.assertIn("@testbot hi <name>",
+                      self.bot.respond_to("@testbot help"))

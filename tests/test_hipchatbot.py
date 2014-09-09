@@ -13,13 +13,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_defaults(self):
         self.assertEqual(self.bot.name, "testbot")
         self.assertEqual(self.bot.apikey, "apikey")
-        self.assertEqual(self.bot.rooms, 'roomname')
-
-    def test_message_for_me(self):
-        self.assertEqual(hipchat.message_for_me("botname", "@botname"), True)
-        self.assertEqual(hipchat.message_for_me("botname", "botname"), False)
-        self.assertEqual(hipchat.message_for_me("botname", "name"), False)
-        self.assertEqual(hipchat.message_for_me("bot", "@bot"), True)
+        self.assertEqual(self.bot.room_name, 'roomname')
 
     def test_format_response(self):
         self.assertEqual(self.bot.format_response("msg", "room"), "@room msg")
@@ -29,28 +23,25 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertIn("@testbot help", self.bot.get_new_messages())
 
     def test__listen(self):
-        self.bot.get_new_messages = lambda: ["@testbot help"]
+        self.bot.get_new_messages = lambda: ["@testbot hi"]
 
-        @self.bot.listen_for("help")
-        def help():
-            return "Helpers"
+        @self.bot.listen_for("hi")
+        def hi():
+            return "hi"
 
         responses = self.bot._listen()
 
-        self.assertIn("@testbot help", self.bot.get_new_messages())
-        self.assertEqual({('test', 'Helpers')}, responses)
+        self.assertIn("@testbot hi", self.bot.get_new_messages())
+        self.assertEqual(set(['hi']), responses)
 
     def test__listen_with_listen_for(self):
         self.bot.get_new_messages = lambda: ["@testbot help"]
         responses = self.bot._listen()
         self.assertIn("@testbot help", self.bot.get_new_messages())
-        self.assertEqual(set([]), responses)
+        self.assertEqual(type(responses), set)
 
     def test__listen_without_message_for_bot(self):
         self.bot.get_new_messages = lambda: ["help"]
         responses = self.bot._listen()
         self.assertIn("help", self.bot.get_new_messages())
         self.assertEqual(set([]), responses)
-
-    def test_send_responses(self):
-        self.bot.send_responses([('msg', 'room')])

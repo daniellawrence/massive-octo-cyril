@@ -6,10 +6,6 @@ import datetime
 import pytz
 
 
-def message_for_me(name, message):
-    if message.startswith('@%s' % name):
-        return True
-    return False
 
 
 class HipChatBot(Bot):
@@ -24,26 +20,6 @@ class HipChatBot(Bot):
         self.msgdate = datetime.datetime.now(tz=pytz.utc)
         # super().__init__(name)
         super(HipChatBot, self).__init__(name)
-
-    def _listen(self):
-        responses = set([])
-        new_messages = self.get_new_messages()
-        for message in new_messages:
-            if not message_for_me(self.name, message):
-                continue
-            # message_from_room = message['room']['name']
-            message_from_room = "test"
-            try:
-                response = self.respond_to(message)
-            except Exception as response_error:
-                response = "%s" % response_error
-            if response:
-                responses.add((message_from_room, response))
-        return responses
-
-    def run(self):
-        self.connect_hipchat()
-        self.listen()
 
     def listen(self):
         while True:
@@ -72,7 +48,7 @@ class HipChatBot(Bot):
     def send_response(self, message, room=''):
         self.room.message(message)
 
-    def connect_hipchat(self):
+    def connect(self):
         self.hc = hypchat.HypChat(self.apikey)
         rooms = self.hc.rooms()['items']
         for room in rooms:

@@ -2,6 +2,12 @@
 import re
 
 
+def message_for_me(name, message):
+    if message.startswith('@%s' % name):
+        return True
+    return False
+
+
 def regex2simple(regex):
     words = regex.split()
     words_regex = []
@@ -50,6 +56,24 @@ class Bot(object):
             return endpoint
         return decorator
 
+    def _listen(self):
+        responses = set([])
+        new_messages = self.get_new_messages()
+        for message in new_messages:
+            if not message_for_me(self.name, message):
+                continue
+            try:
+                response = self.respond_to(message)
+            except Exception as response_error:
+                response = "%s" % response_error  # noqa
+            if response:
+                responses.add(response)
+        return responses
+
+    def run(self):
+        self.connect()
+        self.listen()
+
     def match_rule(self, message):
         return self.match_message_to_listen_rule(message)
 
@@ -85,4 +109,7 @@ class Bot(object):
         return output
 
     def listen(self):
-        raise NotImplemented("Missing listen method")
+        raise NotImplemented("Missing listen() method")
+
+    def connect(self):
+        raise NotImplemented("Missing connect() method")
